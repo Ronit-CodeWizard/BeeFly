@@ -258,6 +258,7 @@ export default function App() {
     }
     setActiveRedirectCode(safeCode);
     setCurrentView('redirect');
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   };
 
   // Delete link handler
@@ -506,7 +507,7 @@ export default function App() {
                   <div className="pt-2">
                     <button
                       onClick={() => alert('Profile settings updated.')}
-                      className="px-5 py-2.5 rounded-lg skeuo-btn-dark text-white text-xs font-bold cursor-pointer"
+                      className="px-5 py-2.5 rounded-lg bg-yellow-400 hover:bg-yellow-500 active:scale-95 text-gray-950 text-xs font-bold cursor-pointer transition-colors border-0 shadow-none"
                     >
                       Save Changes
                     </button>

@@ -159,7 +159,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
           <button
             type="submit"
-            className="px-5 py-2.5 rounded-lg skeuo-btn-dark text-white font-bold text-xs cursor-pointer"
+            className="px-5 py-2.5 rounded-lg bg-yellow-400 hover:bg-yellow-500 active:scale-95 text-gray-950 font-bold text-xs cursor-pointer transition-colors border-0 shadow-none"
           >
             Save Settings
           </button>

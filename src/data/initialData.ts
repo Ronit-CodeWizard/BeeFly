@@ -33,6 +33,19 @@ export const INITIAL_DEMO_USER: UserProfile = {
 
 export const INITIAL_LINKS: LinkRecord[] = [
   {
+    id: 'link-000',
+    userId: 'usr-demo-01',
+    shortCode: 'AbCdEfGh',
+    destinationUrl: 'https://mooncraft.org',
+    customAlias: 'AbCdEfGh',
+    createdAt: new Date().toISOString(),
+    expiresAt: null,
+    isActive: true,
+    redirectSteps: 2,
+    timerSeconds: 15,
+    clicks: 420
+  },
+  {
     id: 'link-001',
     userId: 'usr-demo-01',
     shortCode: 'aK7mQxP2',
@@ -41,8 +54,8 @@ export const INITIAL_LINKS: LinkRecord[] = [
     createdAt: new Date(Date.now() - 86400000 * 4).toISOString(),
     expiresAt: null,
     isActive: true,
-    redirectSteps: 3,
-    timerSeconds: 5,
+    redirectSteps: 2,
+    timerSeconds: 15,
     clicks: 1248
   },
   {

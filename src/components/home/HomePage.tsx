@@ -92,7 +92,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
           <button
             type="submit"
-            className="px-6 py-3 rounded-lg skeuo-btn-green text-white text-xs sm:text-sm font-medium tracking-normal cursor-pointer shrink-0"
+            className="px-6 py-3 rounded-lg bg-yellow-400 hover:bg-yellow-500 active:scale-95 text-gray-950 text-xs sm:text-sm font-bold tracking-normal cursor-pointer shrink-0 transition-colors border-0 shadow-none"
           >
             Shorten URL
           </button>
@@ -141,10 +141,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                   e.stopPropagation();
                   handleCopy();
                 }}
-                className={`px-3.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer border-0 shadow-none ${
                   copied
-                    ? 'skeuo-btn-green'
-                    : 'skeuo-btn text-gray-800 hover:bg-gray-100'
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
                 }`}
                 title="Copy complete URL"
               >
@@ -158,23 +158,13 @@ export const HomePage: React.FC<HomePageProps> = ({
                   e.stopPropagation();
                   onOpenShortLink(createdLink.shortCode);
                 }}
-                className="px-3.5 py-1.5 rounded-md text-xs font-semibold skeuo-btn-dark text-white flex items-center gap-1.5 cursor-pointer shadow-xs"
+                className="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-gray-900 hover:bg-black text-white flex items-center gap-1.5 cursor-pointer border-0 shadow-none transition-colors"
                 title="Open short link in redirect sequence"
               >
                 <span>Open</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </button>
             </div>
-          </div>
-
-          {/* Destination info */}
-          <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
-            <span className="truncate max-w-sm">
-              Destination: <span className="text-gray-700 font-mono">{createdLink.destinationUrl}</span>
-            </span>
-            <span className="shrink-0 text-yellow-800 font-medium">
-              {copied ? 'Copied to clipboard' : 'Click to copy'}
-            </span>
           </div>
         </div>
       )}

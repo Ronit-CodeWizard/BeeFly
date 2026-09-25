@@ -132,7 +132,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
           <button
             type="submit"
-            className="w-full py-3 rounded-lg skeuo-btn-dark text-white text-xs font-bold tracking-wide cursor-pointer mt-2"
+            className="w-full py-3 rounded-lg bg-yellow-400 hover:bg-yellow-500 active:scale-95 text-gray-950 text-xs font-bold tracking-wide cursor-pointer mt-2 transition-colors border-0 shadow-none"
           >
             {mode === 'login' ? 'Login' : 'Sign Up'}
           </button>

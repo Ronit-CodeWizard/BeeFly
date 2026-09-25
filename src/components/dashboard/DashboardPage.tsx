@@ -59,7 +59,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 
         <button
           onClick={onNavigateToCreate}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg skeuo-btn-green text-xs font-medium cursor-pointer self-start sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 active:scale-95 text-gray-950 text-xs font-bold cursor-pointer self-start sm:self-auto transition-colors border-0 shadow-none"
         >
           <Plus className="w-4 h-4" />
           <span>Create Short Link</span>

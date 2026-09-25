@@ -307,7 +307,7 @@ export const CreateLinkPage: React.FC<CreateLinkPageProps> = ({
         <div className="pt-2">
           <button
             type="submit"
-            className="w-full py-3.5 px-4 rounded-lg skeuo-btn-green text-white text-xs sm:text-sm font-semibold tracking-wide flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3.5 px-4 rounded-lg bg-yellow-400 hover:bg-yellow-500 active:scale-95 text-gray-950 text-xs sm:text-sm font-bold tracking-wide flex items-center justify-center gap-2 cursor-pointer transition-colors border-0 shadow-none"
           >
             <span>Create Link</span>
             <ArrowRight className="w-4 h-4" />

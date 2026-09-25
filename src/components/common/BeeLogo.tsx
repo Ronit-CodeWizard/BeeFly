@@ -39,7 +39,6 @@ export const BeeLogo: React.FC<BeeLogoProps> = ({
         height: `${size}px`,
         userSelect: 'none',
         WebkitUserSelect: 'none',
-        WebkitUserDrag: 'none',
         WebkitTouchCallout: 'none',
         pointerEvents: 'none',
       }}

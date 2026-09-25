@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertCircle, Clock, ArrowLeft } from 'lucide-react';
+import { AlertCircle, ArrowLeft } from 'lucide-react';
 
 interface ErrorViewProps {
   type: 'expired' | 'not-found' | 'disabled' | 'general';
@@ -8,49 +8,37 @@ interface ErrorViewProps {
 }
 
 export const ErrorView: React.FC<ErrorViewProps> = ({
-  type,
   message,
   onGoHome
 }) => {
   return (
-    <div className="min-h-[75vh] flex flex-col items-center justify-center p-4 text-center">
-      <div className="w-full max-w-sm p-6 sm:p-8 rounded-xl skeuo-card space-y-4 shadow-xl">
+    <div className="min-h-screen bg-[#f7f8fa] flex flex-col items-center justify-center p-4 text-center">
+      <div className="w-full max-w-md p-8 rounded-2xl bg-white border border-gray-200/90 shadow-xl space-y-6">
         
-        <div className="w-14 h-14 rounded-xl skeuo-inset text-gray-700 flex items-center justify-center mx-auto">
-          {type === 'expired' ? (
-            <Clock className="w-7 h-7 text-gray-600" />
-          ) : (
-            <AlertCircle className="w-7 h-7 text-gray-600" />
-          )}
+        {/* Subtle Alert Icon in neutral dark gray */}
+        <div className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-200 text-gray-800 flex items-center justify-center mx-auto shadow-2xs">
+          <AlertCircle className="w-7 h-7 stroke-[2]" />
         </div>
 
-        <div className="space-y-1">
-          <h1 className="text-xl font-black tracking-tight text-gray-900">
-            {type === 'expired' 
-              ? 'Link expired' 
-              : type === 'disabled'
-              ? 'Link disabled'
-              : type === 'not-found' 
-              ? 'Link not found' 
-              : 'Error'}
+        {/* Text exactly matching specification */}
+        <div className="space-y-2">
+          <h1 className="text-2xl font-black tracking-tight text-gray-900">
+            Link Not Found
           </h1>
-          <p className="text-xs text-gray-500 leading-relaxed font-mono">
-            {message || (type === 'expired'
-              ? 'This short link is no longer available.'
-              : type === 'disabled'
-              ? 'This short link has been disabled by its owner or an administrator.'
-              : 'The short link you\'re trying to access doesn\'t exist.')}
+          <p className="text-sm text-gray-500 leading-relaxed font-mono">
+            {message || 'This shortened link does not exist or may have expired.'}
           </p>
         </div>
 
+        {/* Action Button: Go to Beefly URLs */}
         <div className="pt-2">
           <button
             type="button"
             onClick={onGoHome}
-            className="w-full py-3 px-4 rounded-lg skeuo-btn-dark text-white text-xs font-bold tracking-wide transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            className="w-full py-3.5 px-5 rounded-xl bg-yellow-400 hover:bg-yellow-500 active:scale-95 text-gray-950 text-sm font-bold tracking-wide transition-colors flex items-center justify-center gap-2 cursor-pointer border-0 shadow-none"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>{type === 'expired' || type === 'disabled' ? 'GO HOME' : 'BACK TO HOME'}</span>
+            <ArrowLeft className="w-4 h-4" />
+            <span>Go to Beefly URLs</span>
           </button>
         </div>
 
