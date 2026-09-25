@@ -1,0 +1,6 @@
+{
+  "name": "AdLinker - 3-Step Verification URL Shortener",
+  "description": "Shorten links with monetized ad containers, high-conversion 3-step interstitial verification, analytics, and instant link redirection.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
