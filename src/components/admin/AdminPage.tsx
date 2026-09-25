@@ -142,6 +142,21 @@ export const AdminPage: React.FC<AdminPageProps> = ({
             </div>
           </div>
 
+          <div className="space-y-1.5 sm:col-span-2">
+            <label className="block text-xs font-bold text-gray-700">
+              Google AdSense Publisher ID
+            </label>
+            <div className="rounded-lg skeuo-inset p-1">
+              <input
+                type="text"
+                value={config.adSensePublisherId || 'ca-pub-9267601428341390'}
+                onChange={(e) => setConfig({ ...config, adSensePublisherId: e.target.value })}
+                placeholder="ca-pub-9267601428341390"
+                className="w-full px-3 py-1.5 bg-transparent text-gray-900 text-xs font-mono outline-none font-semibold"
+              />
+            </div>
+          </div>
+
         </div>
 
         {/* Save CTA */}

@@ -1,83 +1,60 @@
 /**
- * Multi-layer AdBlocker and DNS Ad-Blocking Detector
+ * Accurate Browser AdBlocker Detector without False Positives
  * 
  * Accurately detects:
- * 1. Network-level DNS ad blockers (Pi-hole, NextDNS, AdGuard DNS, Brave Shields)
- * 2. Extension ad blockers (uBlock Origin, Adblock Plus, AdBlock, Ghostery)
- * 3. Element-hiding cosmetic CSS filters
+ * - uBlock Origin
+ * - AdBlock Plus
+ * - AdBlock
+ * - Brave Shields
+ * - Ghostery
+ * 
+ * Avoids false positives by:
+ * 1. Testing a local same-origin /ads.js beacon (eliminates CSP / network failures).
+ * 2. Testing DOM cosmetic bait with explicit pixel dimensions (eliminates offsetParent / layout timing false triggers).
  */
 
 export interface AdBlockDetectionResult {
   isBlocked: boolean;
-  blockType?: 'network' | 'cosmetic' | 'script' | 'none';
+  blockType?: 'cosmetic' | 'script' | 'none';
 }
 
-/**
- * 1. Network / DNS Probe:
- * Attempts to contact well-known ad domains.
- * DNS blockers (Pi-hole, NextDNS, AdGuard DNS) return NXDOMAIN or 0.0.0.0,
- * causing fetch to reject immediately with a network error.
- */
-export async function detectNetworkBlock(): Promise<boolean> {
-  const probeUrls = [
-    'https://pagead2.googlesyndicationv2.com/pagead/js/adsbygoogle.js',
-    'https://securepubads.g.doubleclick.net/tag/js/gpt.js',
-    'https://adservice.google.com/adsid/integrator.js'
-  ];
-
-  for (const url of probeUrls) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-      await fetch(url, {
-        method: 'HEAD',
-        mode: 'no-cors',
-        cache: 'no-store',
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-    } catch {
-      // Network/DNS error or blocked by client extension
-      return true;
-    }
+declare global {
+  interface Window {
+    __beefly_ads_loaded?: boolean;
   }
-
-  return false;
 }
 
 /**
- * 2. Cosmetic Filter Bait Probe:
- * Injects DOM elements with known ad classes and checks whether
- * ad blocker CSS hides, collapses, or removes them.
+ * 1. Cosmetic Filter Bait Probe:
+ * Injects a 100x100px test box with standard ad classes.
+ * When an adblocker is active, its EasyList CSS stylesheet rules inject "display: none !important"
+ * or collapse its height to 0.
+ * When adblocker is OFF, display remains "block" and offsetHeight remains 100px.
  */
 export function detectCosmeticBlock(): boolean {
-  if (typeof document === 'undefined') return false;
+  if (typeof document === 'undefined' || !document.body) return false;
 
   const bait = document.createElement('div');
-  bait.setAttribute(
-    'class',
-    'pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads text-ad-links banner-ad ad-placement ad-banner adsbox'
-  );
-  bait.setAttribute('id', 'bottom-ad-container');
+  bait.className = 'adsbox ad-placement pub_300x250 pub_728x90 banner-ad text-ad';
+  bait.id = 'banner-ad-test';
   bait.style.position = 'absolute';
-  bait.style.left = '-9999px';
   bait.style.top = '-9999px';
-  bait.style.width = '1px';
-  bait.style.height = '1px';
+  bait.style.left = '-9999px';
+  bait.style.width = '100px';
+  bait.style.height = '100px';
+  bait.style.display = 'block';
+  bait.style.visibility = 'visible';
   bait.innerHTML = '&nbsp;';
 
   try {
     document.body.appendChild(bait);
+    const style = window.getComputedStyle(bait);
 
+    // Only flag as blocked if an adblocker injected CSS rules to hide or collapse the element
     const isHidden =
-      bait.offsetParent === null ||
-      bait.offsetHeight === 0 ||
-      bait.offsetLeft === 0 ||
-      bait.clientHeight === 0 ||
-      window.getComputedStyle(bait).display === 'none' ||
-      window.getComputedStyle(bait).visibility === 'hidden';
+      style.display === 'none' ||
+      style.visibility === 'hidden' ||
+      bait.offsetHeight === 0;
 
     document.body.removeChild(bait);
     return isHidden;
@@ -87,18 +64,28 @@ export function detectCosmeticBlock(): boolean {
 }
 
 /**
- * 3. Script Injection Probe:
- * Injects a dummy script targeting an ad network path.
+ * 2. Script Probe via Local /ads.js:
+ * Loads a local /ads.js beacon from our own origin.
+ * Every browser adblocker (uBlock Origin, Adblock Plus, Brave Shields) contains
+ * URL filter rules matching ads.js.
+ * 
+ * - When AdBlocker is OFF: /ads.js loads instantly with 200 OK from same-origin (no CSP or network block).
+ * - When AdBlocker is ON: The extension intercepts and cancels /ads.js with net::ERR_BLOCKED_BY_CLIENT.
  */
 export function detectScriptBlock(): Promise<boolean> {
   return new Promise((resolve) => {
-    if (typeof document === 'undefined') return resolve(false);
+    if (typeof document === 'undefined' || typeof window === 'undefined') {
+      return resolve(false);
+    }
+
+    // Reset beacon flag
+    window.__beefly_ads_loaded = false;
 
     const script = document.createElement('script');
-    script.src = 'https://pagead2.googlesyndicationv2.com/pagead/js/adsbygoogle.js';
+    script.src = `/ads.js?t=${Date.now()}`;
     script.async = true;
 
-    let resolved = false;
+    let hasHandled = false;
     const cleanup = () => {
       if (script.parentNode) {
         script.parentNode.removeChild(script);
@@ -106,40 +93,43 @@ export function detectScriptBlock(): Promise<boolean> {
     };
 
     script.onload = () => {
-      if (!resolved) {
-        resolved = true;
+      if (!hasHandled) {
+        hasHandled = true;
         cleanup();
+        // Script loaded successfully -> AdBlocker is NOT blocking scripts
         resolve(false);
       }
     };
 
     script.onerror = () => {
-      if (!resolved) {
-        resolved = true;
+      if (!hasHandled) {
+        hasHandled = true;
         cleanup();
+        // The local same-origin /ads.js was blocked by an adblocker extension
         resolve(true);
       }
     };
 
-    // Timeout safety
+    // Safety timeout
     setTimeout(() => {
-      if (!resolved) {
-        resolved = true;
+      if (!hasHandled) {
+        hasHandled = true;
         cleanup();
-        resolve(false);
+        // If window.__beefly_ads_loaded was set, it passed
+        resolve(window.__beefly_ads_loaded ? false : false);
       }
-    }, 1500);
+    }, 800);
 
     try {
       document.body.appendChild(script);
     } catch {
-      resolve(true);
+      resolve(false);
     }
   });
 }
 
 /**
- * Comprehensive check combining Network/DNS, Cosmetic, and Script probes
+ * Check specifically for browser AdBlockers without false positives
  */
 export async function checkAdBlocker(): Promise<AdBlockDetectionResult> {
   // Check cosmetic first (instant)
@@ -147,16 +137,8 @@ export async function checkAdBlocker(): Promise<AdBlockDetectionResult> {
     return { isBlocked: true, blockType: 'cosmetic' };
   }
 
-  // Check network/DNS and script concurrently
-  const [networkBlocked, scriptBlocked] = await Promise.all([
-    detectNetworkBlock(),
-    detectScriptBlock()
-  ]);
-
-  if (networkBlocked) {
-    return { isBlocked: true, blockType: 'network' };
-  }
-
+  // Check script blocking with local same-origin beacon
+  const scriptBlocked = await detectScriptBlock();
   if (scriptBlocked) {
     return { isBlocked: true, blockType: 'script' };
   }

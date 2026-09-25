@@ -22,9 +22,9 @@ interface RedirectPortalProps {
  *   - Solo Normal Page -> Main Verification Page (Page 2 of 3)
  *   - Solo Normal Page -> Main Verification Page (Page 3 of 3 - Final -> Destination)
  * 
- * Anti-AdBlocker & Anti-DNS Blocker Enforcement:
- * Detects network DNS blockers (Pi-hole, AdGuard DNS, NextDNS, Brave Shields) 
- * and browser ad-blocking extensions. Freezes progression until ads are unblocked.
+ * Anti-AdBlocker Enforcement:
+ * Detects browser ad-blocking extensions (uBlock, AdBlock Plus, Brave Shields)
+ * and freezes progression until adblocker is disabled.
  */
 export const RedirectPortal: React.FC<RedirectPortalProps> = ({
   link,
@@ -34,7 +34,7 @@ export const RedirectPortal: React.FC<RedirectPortalProps> = ({
   // Current internal step from 1 to 6
   const [currentStep, setCurrentStep] = useState<number>(1);
 
-  // Anti-AdBlocker & Anti-DNS blocker detection state
+  // Anti-AdBlocker detection state
   const [isAdBlockDetected, setIsAdBlockDetected] = useState<boolean>(false);
 
   // Perform detection check on mount and step transitions
@@ -43,6 +43,8 @@ export const RedirectPortal: React.FC<RedirectPortalProps> = ({
       const res = await checkAdBlocker();
       if (res.isBlocked) {
         setIsAdBlockDetected(true);
+      } else {
+        setIsAdBlockDetected(false);
       }
     } catch {
       // Ignore network aborts
@@ -51,7 +53,7 @@ export const RedirectPortal: React.FC<RedirectPortalProps> = ({
 
   useEffect(() => {
     runAdBlockCheck();
-    // Continuous polling in case ad blocker or private DNS is activated mid-session
+    // Continuous polling in case ad blocker is activated mid-session
     const timer = setInterval(runAdBlockCheck, 4000);
     return () => clearInterval(timer);
   }, [runAdBlockCheck, currentStep]);

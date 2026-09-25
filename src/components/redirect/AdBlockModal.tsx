@@ -23,13 +23,11 @@ export const AdBlockModal: React.FC<AdBlockModalProps> = ({ isOpen, onResolved }
         onResolved();
       } else {
         setErrorMessage(
-          result.blockType === 'network'
-            ? 'DNS ad-blocking or network adblocker is still active. Please disable your private DNS (AdGuard/NextDNS/Pi-hole) or browser blocker.'
-            : 'AdBlocker extension is still enabled. Please pause or whitelist this site to continue.'
+          'AdBlocker is still detected. Please pause or disable your ad blocker for this page to continue.'
         );
       }
     } catch {
-      setErrorMessage('Could not verify ad clearance. Please disable your blocker and try again.');
+      setErrorMessage('Could not verify ad clearance. Please disable your ad blocker and try again.');
     } finally {
       setIsChecking(false);
     }
@@ -53,31 +51,27 @@ export const AdBlockModal: React.FC<AdBlockModalProps> = ({ isOpen, onResolved }
 
         {/* Title */}
         <h2 id="adblock-title" className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
-          AdBlocker / DNS Blocker Detected
+          AdBlocker Detected
         </h2>
 
         {/* Description */}
         <p className="text-xs sm:text-sm text-gray-600 mt-2.5 leading-relaxed font-sans">
-          We noticed an active <span className="font-semibold text-gray-900">AdBlocker</span>, <span className="font-semibold text-gray-900">Brave Shields</span>, or <span className="font-semibold text-gray-900">Private DNS blocker</span> (such as AdGuard DNS, Pi-hole, or NextDNS).
+          We noticed an active <span className="font-semibold text-gray-900">AdBlocker</span> extension or <span className="font-semibold text-gray-900">Brave Shields</span>.
         </p>
 
         <p className="text-xs sm:text-sm text-gray-500 mt-2 leading-relaxed font-sans">
-          This URL shortener service is <span className="font-bold text-gray-800">100% free</span> because it is funded by sponsored ads. To continue to your link, please disable your ad blocker or private DNS.
+          This URL shortener is <span className="font-bold text-gray-800">100% free</span> because it is supported by advertising. To access your shortened link, please pause or disable your ad blocker.
         </p>
 
         {/* Action Steps Box */}
         <div className="mt-4 p-3.5 bg-gray-50 border border-gray-200/80 rounded-xl text-left space-y-2">
           <div className="flex items-start gap-2.5 text-xs text-gray-700">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            <span><strong>Browser extensions:</strong> Click your adblock icon (uBlock, AdBlock, AdGuard) and click <em>Pause on this site</em>.</span>
+            <span><strong>AdBlock Extensions:</strong> Click your adblocker icon (uBlock Origin, Adblock Plus, AdBlock, Ghostery) and choose <em>Pause on this site</em>.</span>
           </div>
           <div className="flex items-start gap-2.5 text-xs text-gray-700">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            <span><strong>Brave browser:</strong> Click the lion icon in the address bar and switch <em>Shields OFF</em>.</span>
-          </div>
-          <div className="flex items-start gap-2.5 text-xs text-gray-700">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            <span><strong>Private DNS (Android/iOS):</strong> Set Private DNS to <em>Off / Automatic</em> (disable dns.adguard.com or NextDNS).</span>
+            <span><strong>Brave Browser:</strong> Click the lion shield icon next to the address bar and switch <em>Shields OFF</em>.</span>
           </div>
         </div>
 

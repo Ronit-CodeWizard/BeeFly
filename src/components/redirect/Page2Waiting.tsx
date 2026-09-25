@@ -105,7 +105,7 @@ export const Page2Waiting: React.FC<Page2WaitingProps> = ({
   }, [stage, isAdBlockDetected]);
 
   // 2. PAGE CLOCK STAGE: starts after overlay ends, counts down 15s -> 0s
-  // Completely freezes when adblocker or DNS blocker is detected
+  // Completely freezes when adblocker is detected
   useEffect(() => {
     if (stage !== 'PAGE_CLOCK' || isAdBlockDetected) return;
 
