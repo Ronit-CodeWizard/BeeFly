@@ -1,6 +1,6 @@
 {
-  "name": "AdLinker - 3-Step Verification URL Shortener",
-  "description": "Shorten links with monetized ad containers, high-conversion 3-step interstitial verification, analytics, and instant link redirection.",
+  "name": "BEEFLY - URL Shortener",
+  "description": "Minimalist high-performance URL shortener generating unique 8-character codes at beefly-urls.vercel.app with multi-step verification and analytics.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
